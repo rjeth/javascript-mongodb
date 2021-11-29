@@ -1,40 +1,38 @@
-const express = require('express'); 
+const express = require('express');
+const cors = require('cors');
 const mongodb = require('mongodb');
-const MongoClient = mongodb.MongoClient; 
+const MongoClient = mongodb.MongoClient;
 const app = express();
 
+app.use(express.json());
+app.use(cors());
 
-const connection = MongoClient.connect("mongodb+srv://m220student:m220password@mflix.lsht2.mongodb.net/test", { 
+const connection = MongoClient.connect("mongodb+srv://m220student:m220password@mflix.lsht2.mongodb.net/test", {
     useNewUrlParser: true,
- });
+});
 
 
-app.get("/" ,(req, res) =>{
+app.get("/", (req, res) => {
     res.json({ message: "Hello" });
 });
 
-app.get("/api/airbnb" , async ( req , res) =>{
+app.get("/airbnb", async (req, res) => {
     const client = await connection;
     const db = client.db("sample_basic");
-    const airbnb = await db.collection('basic_collection').find({}).limit(20).toArray();
-
-    res.json({ airbnb });
+    const airbnbs = await db.collection('basic_collection').find({}).toArray();
+    res.json({ airbnbs });
 });
 
 
-app.post("/api/airbnb" , async ( req , res) =>{
-    try {
-        const client = await connection;
-    const db = client.db("sample_basic");
-    const airbnb = await db.collection('basic_collection').insertOne({
-        text: req.body.text
-    });
+app.post("/airbnb", async (req, res) => {
 
-    res.json({ airbnb });
-    } catch (error) {
-        
-    }
-    
+    const client = await connection;
+    const db = client.db("sample_basic");
+    const airbnbs = await db.collection('basic_collection').insertOne({
+        text: req.body.text,
+    });
+    res.json({ airbnbs });
+
 });
 
 
